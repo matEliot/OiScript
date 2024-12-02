@@ -1,0 +1,336 @@
+dec row=3
+dec maxDepth=6
+dec superFakex=0
+dec superFakey=0
+dec superFakez=0
+goto Start1
+
+check depth
+if %status = 1 {
+set b%fakeMover%gv1=.
+set m%depth=%fakeMover%gv1
+set fakeMover=7
+goto depti
+}
+if %depth = %maxDepth {
+goto depti
+}
+if %depth = !eval%mx0 {
+goto depti
+}
+if %depth > 0 {
+set weirdVar=%depth
+set weirdVar$2
+if %weirdVar = 0 {
+set weirdVar=%depth
+set weirdVar-1
+set weirdVar=!mx%weirdVar
+set weirdVar-3
+if %fakeMover < %weirdVar {
+set fakeMover=%weirdVar
+}
+set weirdVar+6
+if %fakeMover > %weirdVar {
+goto depti
+}
+}
+}
+if !b%fakeMover5 = . {
+set gv1=5
+check loop1
+if !b%fakeMover%gv1 $ . {
+set gv1+1
+set b%fakeMover%gv1=%symbol
+set checkx=%fakeMover
+set checky=%gv1
+set originalx=%fakeMover
+set originaly=%gv1
+set checks=%symbol
+set checkpointToGoto=Transition
+set checkpointToWinTo=depth
+set gv2=0
+set row=3
+goto winCheck1
+}
+set gv1-1
+goto loop1
+}
+set fakeMover+1
+if %fakeMover < 7 {
+goto depth
+}
+check depti
+set oldDepth=%depth
+set depth-1
+if %depth = -1 {
+if %status = 1 {
+set theMove=%m0
+set finalEval=0
+}
+goto botMoves
+}
+if %status = 1 {
+if %oldDepth < !eval%mx0 {
+set eval%mx0=%oldDepth
+}
+set status=0
+}
+if %depth = 0 {
+set weirdVar=!eval%mx0
+set weirdVar$2
+set gv2=%finalEval
+set gv2$2
+if %gv2 = 1 {
+if %weirdVar = 0 {
+set theMove=%m0
+set finalEval=!eval%mx0
+}
+}
+if %finalEval > !eval%mx0 {
+if %weirdVar = 0 {
+set theMove=%m0
+set finalEval=!eval%mx0
+}
+}
+if %theMove = ff {
+set theMove=%m0
+set finalEval=!eval%mx0
+}
+if !eval%mx0 = %finalEval {
+if %weirdVar = 0 {
+if %random [0,3] = 1 {
+set theMove=%m0
+set finalEval=!eval%mx0
+}
+}
+}
+}
+set fakeMover=!moveCount%depth
+set moveToUndo=!m%depth
+set b%moveToUndo=.
+if %symbol = o {
+set symbol=x
+goto depth
+}
+if %symbol = x {
+set symbol=o
+goto depth
+}
+
+check Transition
+set m%depth=%fakeMover%gv1
+set mx%depth=%fakeMover
+check Transitiom
+set fakeMover+1
+set moveCount%depth=%fakeMover
+set depth+1
+set fakeMover=0
+set moveCount%depth=0
+if %symbol = o {
+set symbol=x
+goto depth
+}
+if %symbol = x {
+set symbol=o
+goto depth
+}
+
+check alphaPrunning
+set gv2=%inputSlot
+set gv2-%fakeMover
+if %gv2 < 0 {
+set gv2*-1
+}
+if %gv2 > 3 {
+set depth-1
+if !mark%depth = 0 {
+set mark%depth=1
+set eval%depth=-100000000
+}
+set depth+1
+set b!m%depth=.
+set fakeMover+1
+goto depth
+}
+goto Transitiom
+
+check winCheck1
+set checky-1
+if %gv2 = %row {
+set status=1
+goto %checkpointToWinTo
+}
+if !b%checkx%checky = %checks {
+set gv2+1
+goto winCheck1
+}
+set checkx=%originalx
+set checky=%originaly
+set gv2=0
+set modex=1
+set modey=0
+set modea=p
+
+check winCheck2
+if %modea = p {
+set checkx+%modex
+set checky+%modey
+}
+if %modea = m {
+set checkx-%modex
+set checky-%modey
+}
+if !b%checkx%checky = %checks {
+set gv2+1
+goto winCheck2
+}
+if %gv2 = %row {
+set status=1
+goto %checkpointToWinTo
+}
+set checkx=%originalx
+set checky=%originaly
+if %modea = p {
+set modea=m
+goto winCheck2
+}
+if %modea = m {
+set modea=p
+set gv2=0
+if %modex = 1 {
+if %modey = 1 {
+set status=0
+goto %checkpointToGoto
+}
+set modex=-1
+set modey=1
+goto winCheck2
+}
+if %modex = -1 {
+set modex=1
+set modey=1
+goto winCheck2
+}
+}
+
+check Start1
+dec b%superFakex%superFakey=.
+set superFakey+1
+if %superFakey = 6 {
+set superFakey=0
+set superFakex+1
+if %superFakex = 7 {
+goto Start2
+}
+}
+goto Start1
+check Start2
+dec moveCount%superFakez=0
+dec m%superFakez=00
+dec eval%superFakez=0
+dec mark%superFakez=0
+set superFakez+1
+if %superFakez = 7 {
+goto Start3
+}
+goto Start2
+check Start3
+dec fakeMover=0
+dec moveToUndo=.
+dec inputSlot=.
+dec gv1=5
+dec checkx=%inputSlot
+dec checky=%gv1
+dec checks=x
+dec gv2=0
+dec originalx=%inputSlot
+dec originaly=%gv1
+dec checkpointToGoto=depthPrep
+dec checkpointToWinTo=gameOver
+dec modex=1
+dec modey=0
+dec modea=p
+dec depth=0
+dec symbol=o
+dec status=0
+dec oldDepth=.
+dec theMove=00
+dec finalEval=0
+dec row=3
+dec weirdVar=0
+goto Menu
+check botMoves
+set b%theMove=o
+if %finalEval = 0 {
+goto gameOver
+}
+check Menu
+mode 21,11
+cls
+print (   %b05 %b15 %b25 %b35 %b45 %b55 %b65)
+print (   %b04 %b14 %b24 %b34 %b44 %b54 %b64)
+print (   %b03 %b13 %b23 %b33 %b43 %b53 %b63)
+print (   %b02 %b12 %b22 %b32 %b42 %b52 %b62)
+print (   %b01 %b11 %b21 %b31 %b41 %b51 %b61)
+print (   %b00 %b10 %b20 %b30 %b40 %b50 %b60)
+print (   1 2 3 4 5 6 7)
+print (Put into Which Slot?)
+input inputSlot
+set inputSlot-1
+if !b%inputSlot5 $ . {
+goto Menu
+}
+set gv1=5
+
+check inputAction
+if !b%inputSlot%gv1 = . {
+set gv1-1
+goto inputAction
+}
+set gv1+1
+set b%inputSlot%gv1=x
+set checkx=%inputSlot
+set checky=%gv1
+set originalx=%inputSlot
+set originaly=%gv1
+set checks=x
+set gv2=0
+set checkpointToGoto=depthPrep
+set checkpointToWinTo=gameOver
+set row=3
+goto winCheck1
+
+check depthPrep
+set depth=0
+set symbol=o
+set moveCount0=0
+set moveCount1=0
+set moveCount2=0
+set moveCount3=0
+set moveCount4=0
+set moveCount5=0
+set moveCount6=0
+set eval0=100
+set eval1=100
+set eval2=100
+set eval3=100
+set eval4=100
+set eval5=100
+set eval6=100
+set fakeMover=0
+set status=0
+set theMove=ff
+set finalEval=100
+goto depth
+
+check gameOver
+cls
+print (   %b05 %b15 %b25 %b35 %b45 %b55 %b65)
+print (   %b04 %b14 %b24 %b34 %b44 %b54 %b64)
+print (   %b03 %b13 %b23 %b33 %b43 %b53 %b63)
+print (   %b02 %b12 %b22 %b32 %b42 %b52 %b62)
+print (   %b01 %b11 %b21 %b31 %b41 %b51 %b61)
+print (   %b00 %b10 %b20 %b30 %b40 %b50 %b60)
+print (Game Over)
+input inputSlot
+exit
